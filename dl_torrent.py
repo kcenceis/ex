@@ -1,10 +1,7 @@
-import os
 import re
-
 # Utils.save2html('torrent.html',Utils.getRequest('https://exhentai.org/gallerytorrents.php?gid=1923317&t=fa1a4ce670'))
 import time
 
-import requests
 from bs4 import BeautifulSoup
 
 import Utils

@@ -34,7 +34,7 @@ def connSQL():
        torrent_address        CHAR(2000),
        magnet         CHAR(2000),
        file_name      CHAR(2000),
-       delete         INT(4),
+       _delete         INT(4),
        dDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
        );''')
         conn.commit()
@@ -117,7 +117,7 @@ def DeleteSQL():
     if os.path.exists(SQLDATABASEFILE):
         conn = sqlite3.connect(SQLDATABASEFILE)
         c = conn.cursor()
-        cursor = c.execute("delete from ex where date('now', '-7 day') >= date(dDate) and delete='1'")  # 删除7日前的数据
+        cursor = c.execute("delete from ex where date('now', '-7 day') >= date(dDate) and _delete='1'")  # 删除7日前的数据
         conn.commit()
         cursor.close()
         conn.close()

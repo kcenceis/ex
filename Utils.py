@@ -89,7 +89,7 @@ class ex_info:
 
 
 def getgl1c(r):
-    isFinish = False
+#    isFinish = False
     bookList = []
     soup = BeautifulSoup(r, 'html.parser')
     str_cookies = cookie
@@ -178,10 +178,10 @@ def getgl1c(r):
             else:
                 # 下载 预览图 并 写入数据库
                 dl.download(i)
-        else:
-            # 已经下载过
-            isFinish = True
+#        else:
+#            # 已经下载过
+#            isFinish = True
 
-    # 出现过已下载的页面 退出程序
-    if isFinish:
-        exit(0)
+#   # 出现过已下载的页面 退出程序
+#   if isFinish:
+#       exit(0)

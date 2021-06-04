@@ -71,12 +71,13 @@ def download(ex_info):
     # 遍历List 获取 正确下载地址
     for i in torrent_info_list:
         if i.Size == MaxSize:
+            time.sleep(1)
             # 下载种子
             r = Utils.getRequest(i.torrent_address)
             magnet = torrent2magnet.convert(r.content)
             ex_info.magnet = magnet
             dl.download(ex_info)
-            time.sleep(1.5)
+            time.sleep(1)
             # 写入文件 下载种子 (废弃)
             #path = os.path.split(os.path.realpath(__file__))[0] + os.sep + 'torrent' + os.sep
             #if not os.path.exists(path):

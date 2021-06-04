@@ -21,7 +21,5 @@ if __name__ == '__main__':
                 'page:': str(i),
                 'f_cats': f_cats
             })
-        # file = open('ex.html', 'r')
-        # html = file.read()
         Utils.getgl1c(r.text)
         time.sleep(1.5)

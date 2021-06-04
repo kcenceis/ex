@@ -27,8 +27,7 @@ headers = {
 }
 cookie = {'ipb_member_id': '49635', 'ipb_pass_hash': '22b275993d8d3bdb4bca2aeef050210e',
           'igneous': '75267c0b7',
-          'sk':'uhshzwzisiq0rjb6rmzxirgtvv7v'}
-
+          'sk': 'uhshzwzisiq0rjb6rmzxirgtvv7v'}
 
 mReq = requests.session()
 mReq.mount('https://', HTTPAdapter(max_retries=5))
@@ -89,7 +88,7 @@ class ex_info:
 
 
 def getgl1c(r):
-#    isFinish = False
+    #    isFinish = False
     bookList = []
     soup = BeautifulSoup(r, 'html.parser')
     str_cookies = cookie
@@ -170,14 +169,23 @@ def getgl1c(r):
             bookList[i].preview_address = preview_address
 
     for i in bookList:
+        cursor = SQLUTILS.selectSQL_getex(i)  # 获取ex数据库内容
+        cursor_count = len(cursor)
         # 防止已经下载过
-        if not SQLUTILS.isFinish(i.address):
+        if cursor_count == 0:
             # 如有torrent 则下载种子
             if re.search('^https://exhentai.org/gallerytorrents.php?.+?$', i.torrent_address):
-                dl_torrent.download(i)
+                dl_torrent.download(ex_info=i, mode=0)
             else:
                 # 下载 预览图 并 写入数据库
                 dl.download(i)
+        # 已经下载过 上次抓取时没有种子链接 现在获取到种子链接 则加入到数据库
+        # 逻辑: 数据库行数不等于0 则证明存在该条数据
+        #      表中torrent_address为空 则证明没有种子
+        #      抓取的数据中获取到torrent_address
+        #      则进行操作
+        elif cursor_count != 0 & cursor[0][3] == "" & i.torrent_address != "":
+            dl_torrent.download(ex_info=i, mode=1)
 #        else:
 #            # 已经下载过
 #            isFinish = True

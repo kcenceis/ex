@@ -1,5 +1,5 @@
-import sqlite3
 import os
+import sqlite3
 
 SQLDATABASEFILE = os.path.split(os.path.realpath(__file__))[0] + os.sep + 'ex.db'  # 数据库文件名称
 
@@ -34,6 +34,7 @@ def connSQL():
        torrent_address        CHAR(2000),
        magnet         CHAR(2000),
        file_name      CHAR(2000),
+       delete         INT(4),
        dDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
        );''')
         conn.commit()
@@ -55,6 +56,17 @@ def insertSQL(ex_info):
     conn.close()
 
 
+def updateSQL_magent(ex_info):
+    conn = sqlite3.connect(SQLDATABASEFILE)
+    c = conn.cursor()
+    c.execute("UPDATE ex SET  magnet = ?\
+      where address = ? ",
+              (ex_info.magnet,
+               ex_info.address,))
+    conn.commit()
+    c.close()
+    conn.close()
+
 
 def selectSQL():
     conn = sqlite3.connect(SQLDATABASEFILE)
@@ -62,11 +74,26 @@ def selectSQL():
     conn.commit()
     # 查询数据
     cursor = c.execute("SELECT *  from ex")
-    for row in cursor:
-        print("ID = ", row[0])
-        print("ADDRESS = ", row[1])
-    cursor.close()
-    conn.close()
+    # for row in cursor:
+    #    print("ID = ", row[0])
+    #    print("ADDRESS = ", row[1])
+    return cursor.fetchall()
+    # cursor.close()
+    # conn.close()
+
+
+def selectSQL_getex(ex_info):
+    conn = sqlite3.connect(SQLDATABASEFILE)
+    c = conn.cursor()
+    conn.commit()
+    # 查询数据
+    cursor = c.execute("SELECT *  from ex where address=?", (ex_info.address,))
+    # for row in cursor:
+    #    print("ID = ", row[0])
+    #    print("ADDRESS = ", row[1])
+    return cursor.fetchall()
+    # cursor.close()
+    # conn.close()
 
 
 # 获取有多少相同的地址，返回bool
@@ -90,7 +117,7 @@ def DeleteSQL():
     if os.path.exists(SQLDATABASEFILE):
         conn = sqlite3.connect(SQLDATABASEFILE)
         c = conn.cursor()
-        cursor = c.execute("delete from ex where date('now', '-7 day') >= date(dDate)")  # 删除7日前的数据
+        cursor = c.execute("delete from ex where date('now', '-7 day') >= date(dDate) and delete='1'")  # 删除7日前的数据
         conn.commit()
         cursor.close()
         conn.close()

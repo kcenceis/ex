@@ -18,7 +18,7 @@ class torrent_info:
     torrent_address = ''
 
 
-def download(ex_info):
+def download(ex_info, mode):
     MaxSize = 0  # 最大的Size
     MaxDownloads = 0  # 最大的Downloads
     MaxSeeds = 0  # 最大的Seeds
@@ -64,7 +64,7 @@ def download(ex_info):
             elif re.search('<a href="https://exhentai.org/torrent/', str_k):
                 table_tr_td_a_onclick = k.find('a')['onclick']
                 table_tr_td_a_onclick = re.findall("document.location='(.+?)'", table_tr_td_a_onclick)[0]
-                #table_tr_td_a_href = k.find('a')['href']
+                # table_tr_td_a_href = k.find('a')['href']
                 s.torrent_address = table_tr_td_a_onclick
         # 将获取到的数据插入到List
         torrent_info_list.append(s)
@@ -76,13 +76,18 @@ def download(ex_info):
             r = Utils.getRequest(i.torrent_address)
             magnet = torrent2magnet.convert(r.content)
             ex_info.magnet = magnet
-            dl.download(ex_info)
+            # mode  0 代表 数据库 不存在该条 则插入一条新数据
+            if mode == 0:
+                dl.download(ex_info)
+            # mode  1 代表 数据库 存在该条 但没有magnet 需要插入magnet
+            elif mode == 1:
+                print()
             time.sleep(1)
             # 写入文件 下载种子 (废弃)
-            #path = os.path.split(os.path.realpath(__file__))[0] + os.sep + 'torrent' + os.sep
-            #if not os.path.exists(path):
+            # path = os.path.split(os.path.realpath(__file__))[0] + os.sep + 'torrent' + os.sep
+            # if not os.path.exists(path):
             #    os.mkdir(path)
-            #with open(path + ex_info.file_name + '.torrent', 'wb') as file:
+            # with open(path + ex_info.file_name + '.torrent', 'wb') as file:
             #    file.write(r.content)
             #    file.close()
             break  # 防止有相同大小的Size 重复进行下载

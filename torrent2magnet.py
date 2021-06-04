@@ -1,6 +1,7 @@
-import bencodepy
-import hashlib
 import base64
+import hashlib
+
+import bencodepy
 
 
 def convert(content):

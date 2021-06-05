@@ -68,8 +68,7 @@ def insertSQL(ex_info, ex_tag_list):
                ex_tag_list.artist,
                ex_tag_list.male,
                ex_tag_list.female,
-               ex_tag_list.misc
-               ,))
+               ex_tag_list.misc,))
     conn.commit()
     c.close()
     conn.close()

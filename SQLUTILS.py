@@ -34,6 +34,15 @@ def connSQL():
        torrent_address        CHAR(2000),
        magnet         CHAR(2000),
        file_name      CHAR(2000),
+       category       CHAR(200),
+       language       CHAR(2000),
+       parody         CHAR(2000),
+       character      CHAR(2000),
+       _group          CHAR(2000),
+       artist         CHAR(2000),
+       male           CHAR(2000),
+       female         CHAR(2000),
+       misc           CHAR(2000),
        _delete         INT(4),
        dDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
        );''')
@@ -41,16 +50,26 @@ def connSQL():
         conn.close()
 
 
-def insertSQL(ex_info):
+def insertSQL(ex_info, ex_tag_list):
     conn = sqlite3.connect(SQLDATABASEFILE)
     c = conn.cursor()
-    c.execute("INSERT INTO ex (title,address,torrent_address,magnet,file_name) \
-      VALUES (?,?,?,?,?)",
+    c.execute("INSERT INTO ex (title,address,torrent_address,magnet,file_name,category,language,parody,character,"
+              "_group,artist,male,female,misc) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
               (ex_info.title,
                ex_info.address,
                ex_info.torrent_address,
                ex_info.magnet,
-               ex_info.file_name,))
+               ex_info.file_name,
+               ex_info.category,
+               ex_tag_list.language,
+               ex_tag_list.parody,
+               ex_tag_list.character,
+               ex_tag_list.group,
+               ex_tag_list.artist,
+               ex_tag_list.male,
+               ex_tag_list.female,
+               ex_tag_list.misc
+               ,))
     conn.commit()
     c.close()
     conn.close()

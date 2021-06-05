@@ -3,7 +3,7 @@ import time
 import SQLUTILS
 import Utils
 
-maxPage = 5  # 每次运行抓取的页面数
+maxPage = 1  # 每次运行抓取的页面数
 
 if __name__ == '__main__':
     # r = Utils.getRequest('https://exhentai.org/')
@@ -23,6 +23,6 @@ if __name__ == '__main__':
                 'page': str(i),
                 'f_cats': f_cats
             })
-            print(r.url)
+
         Utils.getgl1c(r.text)
         time.sleep(1.5)

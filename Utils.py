@@ -85,6 +85,7 @@ class ex_info:
     torrent_address = ''
     file_name = ''
     magnet = ''
+    category = ''
 
 
 def getgl1c(r):
@@ -94,6 +95,7 @@ def getgl1c(r):
     str_cookies = cookie
     # 判断是否存在cookies：sk
     if cookie.get('sk') is not None:
+
         for div in soup.find_all('div', class_='gl3t'):
             s = ex_info()
             div_gl3t_a_href = div.find('a')['href']  # book 链接
@@ -106,8 +108,11 @@ def getgl1c(r):
             s.preview_address = preview_address
             s.file_name = validateTitle(title)
             bookList.append(s)
-        div_gldown = soup.find_all('div', class_='gldown')
+
+        div_gldown = soup.find_all('div', class_='gldown')  # 种子页面链接
+        div_gl5t = soup.find_all('div', class_='gl5t')  # category
         for i in range(0, len(div_gldown)):
+            bookList[i].category = div_gl5t[i].find('div', class_='cs').text
             str_div = str(div_gldown[i])
             # 检查不到任何种子
             if re.search('title="No torrents available"', str_div):
@@ -115,6 +120,8 @@ def getgl1c(r):
             else:
                 div_gldown_a_href = div_gldown[i].find('a')['href']  # torrent页面链接
                 bookList[i].torrent_address = div_gldown_a_href
+        # 获取category
+
     # for i in soup.find_all('div', class_='gl1t'):
     #    print(i)
     #    print(i.find('a')['href']) #book
@@ -184,7 +191,7 @@ def getgl1c(r):
         #      表中torrent_address为空 则证明没有种子
         #      抓取的数据中获取到torrent_address
         #      则进行操作
-        elif cursor_count != 0 & cursor[0][3] == "" & i.torrent_address != "":
+        elif cursor_count != 0 and cursor[0][3] == "" and i.torrent_address != "":
             dl_torrent.download(ex_info=i, mode=1)
 #        else:
 #            # 已经下载过

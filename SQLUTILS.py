@@ -54,8 +54,8 @@ def connSQL():
         # 执行创建表
         c.execute('''CREATE TABLE filter_list                      
        (id INTEGER PRIMARY KEY AUTOINCREMENT,
-       TAG_LIST         CHAR(2000),
-       TAG           CHAR(2000),
+       tag_list         CHAR(2000),
+       tag           CHAR(2000),
        dDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
        );''')
         conn.commit()

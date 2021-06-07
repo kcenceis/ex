@@ -48,6 +48,18 @@ def connSQL():
        );''')
         conn.commit()
         conn.close()
+    if not check_table('filter_list'):
+        conn = sqlite3.connect(SQLDATABASEFILE)
+        c = conn.cursor()
+        # 执行创建表
+        c.execute('''CREATE TABLE filter_list                      
+       (id INTEGER PRIMARY KEY AUTOINCREMENT,
+       TAG_LIST         CHAR(2000),
+       TAG           CHAR(2000),
+       dDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+       );''')
+        conn.commit()
+        conn.close()
 
 
 def insertSQL(ex_info, ex_tag_list):

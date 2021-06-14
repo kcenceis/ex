@@ -4,7 +4,7 @@
 
 ## Install
 
-git clone https://github.com/kcenceis/nyaacrawler.git
+git clone https://github.com/kcenceis/ex.git
 
 pip install -r requirements.txt
 

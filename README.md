@@ -146,7 +146,7 @@ SQLite: ex.db
         <tr>
             <td>tag_list</td>
             <td>CHAR</td>
-            <td>200</td>
+            <td>2000</td>
             <td></td>
         </tr>
         <tr>

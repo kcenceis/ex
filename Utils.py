@@ -8,7 +8,7 @@ import SQLUTILS
 import dl
 import dl_torrent
 
-proxyON = False  # 是否开启代理
+proxyON = True  # 是否开启代理
 # socks代理规则
 proxies = {'http': 'socks5://127.0.0.1:1080',
            'https': 'socks5://127.0.0.1:1080'}
@@ -88,6 +88,23 @@ class ex_info:
     category = ''
 
 
+# 获取导航栏信息 返回指定数据(下一页的网址)
+def getsearchnav(r):
+    soup = BeautifulSoup(r, 'html.parser')
+    searchnav = soup.find_all('div', class_='searchnav')
+    ufirst = searchnav[0].find('a', id='ufirst')
+    uprev = searchnav[0].find('a', id='uprev')
+    ujumpbox = searchnav[0].find('a', id='ujumpbox')
+    unext = searchnav[0].find('a', id='unext')
+    ulast = searchnav[0].find('a', id='ulast')
+    #print(ufirst)
+    #print(uprev)
+    #print(ujumpbox)
+    #print(unext)
+    #print(ulast)
+    return unext['href']
+
+# 获取预览页的信息
 def getgl1c(r):
     #    isFinish = False
     bookList = []

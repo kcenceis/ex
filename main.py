@@ -11,15 +11,18 @@ if __name__ == '__main__':
     SQLUTILS.connSQL()
     SQLUTILS.DeleteSQL()
     exhentai_url = 'https://exhentai.org/'
-    params = 'f_cats=705'
-    f_cats = '705'
+    params = 'f_cats=641'
+    unext = ""
     for i in range(0, maxPage):
         if i == 0:
-            r = Utils.getRequest(exhentai_url)
+            r = Utils.getPage(exhentai_url,params)
         else:
-            r = Utils.getPage(exhentai_url, params={
-                'page': str(i)
-            })
+            r = Utils.getRequest(unext)
+            # r = Utils.getPage(exhentai_url, params={
+            #    'page': str(unext)
+            # })
         print(r.url)
+        if i != maxPage:
+            unext = Utils.getsearchnav(r.text)
         Utils.getgl1c(r.text)
         time.sleep(1.5)

@@ -8,7 +8,7 @@ import SQLUTILS
 import dl
 import dl_torrent
 
-proxyON = True  # 是否开启代理
+proxyON = False  # 是否开启代理
 # socks代理规则
 proxies = {'http': 'socks5://127.0.0.1:1080',
            'https': 'socks5://127.0.0.1:1080'}

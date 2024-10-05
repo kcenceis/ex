@@ -1,0 +1,227 @@
+import json
+import re
+
+import requests
+from bs4 import BeautifulSoup
+from requests.adapters import HTTPAdapter
+
+import Mysqldb
+import SQLUTILS
+import dl
+import dl_torrent
+
+proxies = "socks5://127.0.0.1:1080"
+proxyON = False
+SQLMode = "SQLite"  # 模式为SQLite MySQL
+
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                  "Chrome/90.0.4430.93 Safari/537.36 "
+}
+cookie = {'ipb_member_id': '49635', 'ipb_pass_hash': '22b275993d8d3bdb4bca2aeef050210e',
+          'igneous': '75267c0b7',
+          'sk': 'uhshzwzisiq0rjb6rmzxirgtvv7v'}
+
+
+
+mReq = requests.session()
+mReq.mount('https://', HTTPAdapter(max_retries=5))
+mReq.mount('http://', HTTPAdapter(max_retries=5))
+isFinish = False
+
+def initSQL():
+    if SQLMode == "SQLite":
+       SQLUTILS.connSQL()
+       SQLUTILS.DeleteSQL()
+    elif SQLMode == "MySQL":
+        Mysqldb.conn()
+        Mysqldb.DeleteSQL()
+
+# 定义Request方法,request headers 和 proxy
+def getRequest(http_url):
+    # 是否开启代理
+    if proxyON:
+        r = mReq.get(url=http_url, headers=headers, proxies=proxies, cookies=cookie, timeout=10)
+    else:
+        r = mReq.get(url=http_url, headers=headers, cookies=cookie, timeout=10)
+    # r.raise_for_status()
+    return r
+
+
+# 定义Request方法,request headers 和 proxy
+def getPage(http_url, params):
+    # 是否开启代理
+    if proxyON:
+        r = mReq.get(url=http_url, headers=headers, proxies=proxies, cookies=cookie, timeout=10, params=params)
+    else:
+        r = mReq.get(url=http_url, headers=headers, cookies=cookie, timeout=10, params=params)
+    # r.raise_for_status()
+    return r
+
+
+# 将不能作为文件名的字符替换为下划线
+def validateTitle(title):
+    rstr = r"[\/\\\:\*\?\"\<\>\|]"  # '/ \ : * ? " < > |'
+    new_title = re.sub(rstr, "_", title)  # 替换为下划线
+    return new_title
+
+
+# 将网页下载到文件 防止多次访问页面导致被封IP
+def save2html(file_name, r):
+    with open(file_name, 'w') as file:
+        file.write(r.text)
+        file.close()
+
+
+# 字符处理
+def getSODString(self):
+    [s.extract() for s in self('span')]
+    myNowTorrnet = self.text.replace(' ', '')  # 种子大小
+    return myNowTorrnet
+
+
+class ex_info:
+    title = ''
+    address = ''
+    preview_address = ''
+    torrent_address = ''
+    file_name = ''
+    magnet = ''
+    category = ''
+
+
+# 获取导航栏信息 返回指定数据(下一页的网址)
+def getsearchnav(r):
+    soup = BeautifulSoup(r, 'html.parser')
+    searchnav = soup.find_all('div', class_='searchnav')
+    ufirst = searchnav[0].find('a', id='ufirst')
+    uprev = searchnav[0].find('a', id='uprev')
+    ujumpbox = searchnav[0].find('a', id='ujumpbox')
+    unext = searchnav[0].find('a', id='unext')
+    ulast = searchnav[0].find('a', id='ulast')
+    #print(ufirst)
+    #print(uprev)
+    #print(ujumpbox)
+    #print(unext)
+    #print(ulast)
+    return unext['href']
+
+# 获取预览页的信息
+def getgl1c(r):
+    #    isFinish = False
+    bookList = []
+    soup = BeautifulSoup(r, 'html.parser')
+    str_cookies = cookie
+    # 判断是否存在cookies：sk
+    if cookie.get('sk') is not None:
+
+        for div in soup.find_all('div', class_='gl3t'):
+            s = ex_info()
+            div_gl3t_a_href = div.find('a')['href']  # book 链接
+            div_gl3t_img = div.find('img')  # div_gl3t_img
+
+            preview_address = div_gl3t_img['src']
+            title = div_gl3t_img['title']
+            s.title = title
+            s.address = div_gl3t_a_href
+            s.preview_address = preview_address
+            s.file_name = validateTitle(title)
+            bookList.append(s)
+
+        div_gldown = soup.find_all('div', class_='gldown')  # 种子页面链接
+        div_gl5t = soup.find_all('div', class_='gl5t')  # category
+        for i in range(0, len(div_gldown)):
+            bookList[i].category = div_gl5t[i].find('div', class_='cs').text
+            str_div = str(div_gldown[i])
+            # 检查不到任何种子
+            if re.search('title="No torrents available"', str_div):
+                pass
+            else:
+                div_gldown_a_href = div_gldown[i].find('a')['href']  # torrent页面链接
+                bookList[i].torrent_address = div_gldown_a_href
+        # 获取category
+
+    # for i in soup.find_all('div', class_='gl1t'):
+    #    print(i)
+    #    print(i.find('a')['href']) #book
+    #    print(i.find('div', class_='gl4t').text) #标题
+    # 抓取标题 本的地址
+
+    # for i in soup.find_all('td', class_='gl3t'):
+    #    s = ex_info()
+    #    # print(i)
+    #    a = i.find('a')
+    #    a_div_glink = a.find('div', class_='glink').text  # 标题
+    #    a_href = a['href']  # book 链接
+    #
+    #    #      t = re.findall('http[s]?://exhentai.org/g/.+/(.+?)/', a_href)
+    #    #      gid = re.findall('http[s]?://exhentai.org/g/(.+?)/.+/', a_href)
+    #    s.title = a_div_glink
+    #    s.file_name = validateTitle(a_div_glink)
+    #    s.address = a_href
+    #    print(s.address)
+    #    bookList.append(s)
+    else:
+        for div in soup.find_all('td', class_='gl3c glname'):
+            s = ex_info()
+            # print(div)
+            div_gl3c_a_href = div.find('a')['href']  # book 链接
+            div_gl3t_img = div.find('img')  # div_gl3t_img
+            # preview_address = div_gl3t_img['src']
+            # title = div_gl3t_img['title']
+            # s.title = title
+            title = div.find('div', class_='glink').text  # 标题
+            s.title = title
+            s.address = div_gl3c_a_href
+            # s.preview_address = preview_address
+            s.file_name = validateTitle(title)
+            bookList.append(s)
+        # 抓取 预览图
+        td_gl2c = soup.find_all('td', class_='gl2c')
+        for i in range(0, len(td_gl2c)):
+            td_gl2c_img = td_gl2c[i].find('img')
+            if re.search('<img alt="(.+?)" data-src="(.+?)"', str(td_gl2c_img)):
+                preview_address = td_gl2c_img['data-src']
+            else:
+                preview_address = td_gl2c_img['src']
+            td_gl2c_gldown_a = td_gl2c[i].find('div', 'gldown').find('a')
+            # 没有种子的网址
+            if td_gl2c_gldown_a is None:
+                pass
+            # 获取到种子
+            else:
+                bookList[i].torrent_address = td_gl2c_gldown_a['href']
+            # title = td_gl2c_img['alt'] 预览图中的标题 预留
+            bookList[i].preview_address = preview_address
+
+    for i in bookList:
+        cursor = ""
+        if SQLMode == "SQLite":
+           cursor = SQLUTILS.selectSQL_getex(i)  # 获取ex数据库内容
+        elif SQLMode == "MySQL":
+            Mysqldb.selectSQL_getex(i)
+        cursor_count = len(cursor)
+        # 防止已经下载过
+        if cursor_count == 0:
+#2024-3-16去除检查并重新下载种子的功能 防止bug
+            # 如有torrent 则下载种子
+#            if re.search('^https://exhentai.org/gallerytorrents.php?.+?$', i.torrent_address):
+#                dl_torrent.download(ex_info=i, mode=0)
+#            else:
+                # 下载 预览图 并 写入数据库
+                dl.download(i)
+        # 已经下载过 上次抓取时没有种子链接 现在获取到种子链接 则加入到数据库
+        # 逻辑: 数据库行数不等于0 则证明存在该条数据
+        #      表中torrent_address为空 则证明没有种子
+        #      抓取的数据中获取到torrent_address
+        #      则进行操作
+#2024/3/20去除该功能       
+#        elif cursor_count != 0 and cursor[0][3] == "" and i.torrent_address != "":
+#            dl_torrent.download(ex_info=i, mode=1)
+#        else:
+#            # 已经下载过
+#            isFinish = True
+
+#   # 出现过已下载的页面 退出程序
+#   if isFinish:
+#       exit(0)

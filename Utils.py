@@ -12,7 +12,7 @@ import dl_torrent
 
 proxies = "socks5://127.0.0.1:1080"
 proxyON = False
-SQLMode = "SQLite"  # 模式为SQLite MySQL
+SQLMode = "MySQL"  # 模式为SQLite MySQL
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "

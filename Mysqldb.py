@@ -3,7 +3,7 @@ import mysql.connector
 host = "db"
 user = ""
 password = ""
-db = "ex"
+db = "test"
 
 
 def initMySQL():
@@ -60,6 +60,9 @@ def conn():
        male                 text,
        female               text,
        misc                 text,
+       cosplayer            text,
+       mixed                text,
+       other                text,
        _delete              INT(4),
        dDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         data1               text,
@@ -84,7 +87,7 @@ def insertSQL(ex_info, ex_tag_list):
     conn = initMySQL()
     cursor = conn.cursor()
     cursor.execute("INSERT INTO ex (title,address,torrent_address,magnet,file_name,category,language,parody,_character,"
-              "_group,artist,male,female,misc) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+              "_group,artist,male,female,misc,cosplayer,mixed,other) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
                    (
                 ex_info.title,
                 ex_info.address,

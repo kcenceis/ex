@@ -13,6 +13,9 @@ class ex_tag_list:
     male = ""
     female = ""
     misc = ""
+    cosplayer = ""
+    mixed = ""
+    other = ""
 
 
 def get_TAG_LIST(url):
@@ -46,6 +49,12 @@ def get_TAG_LIST(url):
         elif re.search('^female:$', tag):
             new_tag_list.female = tag_list[:-1]
         elif re.search('^misc:$', tag):
+            new_tag_list.misc = tag_list[:-1]
+        elif re.search('^cosplayer:$', tag):
+            new_tag_list.misc = tag_list[:-1]
+        elif re.search('^mixed:$', tag):
+            new_tag_list.misc = tag_list[:-1]
+        elif re.search('^other:$', tag):
             new_tag_list.misc = tag_list[:-1]
     # 返回内容
     return new_tag_list

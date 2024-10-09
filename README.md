@@ -9,6 +9,7 @@ git clone https://github.com/kcenceis/ex.git
 pip install -r requirements.txt
 
 ## Database_Design
+
 SQLite: ex.db
 
 <div>
@@ -163,7 +164,6 @@ SQLite: ex.db
         </tr>
     </table>
 </div>
-
 
 ## Usage
 

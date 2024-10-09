@@ -1,0 +1,35 @@
+import Mysqldb
+import content_page
+from Utils import ex_info
+
+
+def gettag(address):
+    print('gettag:{}'.format(address))
+    ex_tag_list = content_page.get_TAG_LIST(address)
+    exinfo = ex_info()
+    exinfo.address = address
+    Mysqldb.updateSQL_TAG(exinfo, ex_tag_list)
+
+
+def deletetag(address):
+    print('deletetag:{}'.format(address))
+    conn = Mysqldb.initMySQL()
+    cursor = conn.cursor()
+    cursor.execute('delete from push where address=%s', (address,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+
+try:
+    conn = Mysqldb.initMySQL()
+    cursor = conn.cursor()
+    cursor.execute('''SELECT address from push limit 1''')
+    result = cursor.fetchone()
+    conn.close()
+    if len(result[0]) != 0:
+        address = result[0]
+        gettag(address)
+        deletetag(address)
+except:
+    print()

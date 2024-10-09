@@ -1,14 +1,12 @@
-import json
 import re
 
 import requests
 from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
 
-import Mysqldb
 import SQLUTILS
+import content_page
 import dl
-import dl_torrent
 
 proxies = "socks5://127.0.0.1:1080"
 proxyON = False
@@ -22,20 +20,16 @@ cookie = {'ipb_member_id': '49635', 'ipb_pass_hash': '22b275993d8d3bdb4bca2aeef0
           'igneous': '75267c0b7',
           'sk': 'uhshzwzisiq0rjb6rmzxirgtvv7v'}
 
-
-
 mReq = requests.session()
 mReq.mount('https://', HTTPAdapter(max_retries=5))
 mReq.mount('http://', HTTPAdapter(max_retries=5))
 isFinish = False
 
+
 def initSQL():
-    if SQLMode == "SQLite":
-       SQLUTILS.connSQL()
-       SQLUTILS.DeleteSQL()
-    elif SQLMode == "MySQL":
-        Mysqldb.conn()
-        Mysqldb.DeleteSQL()
+    SQLUTILS.connSQL()
+    SQLUTILS.DeleteSQL()
+
 
 # 定义Request方法,request headers 和 proxy
 def getRequest(http_url):
@@ -99,12 +93,13 @@ def getsearchnav(r):
     ujumpbox = searchnav[0].find('a', id='ujumpbox')
     unext = searchnav[0].find('a', id='unext')
     ulast = searchnav[0].find('a', id='ulast')
-    #print(ufirst)
-    #print(uprev)
-    #print(ujumpbox)
-    #print(unext)
-    #print(ulast)
+    # print(ufirst)
+    # print(uprev)
+    # print(ujumpbox)
+    # print(unext)
+    # print(ulast)
     return unext['href']
+
 
 # 获取预览页的信息
 def getgl1c(r):
@@ -195,33 +190,12 @@ def getgl1c(r):
             bookList[i].preview_address = preview_address
 
     for i in bookList:
-        cursor = ""
-        if SQLMode == "SQLite":
-           cursor = SQLUTILS.selectSQL_getex(i)  # 获取ex数据库内容
-        elif SQLMode == "MySQL":
-            Mysqldb.selectSQL_getex(i)
-        cursor_count = len(cursor)
+        cursor = SQLUTILS.selectSQL_getex(i)  # 获取ex数据库内容
         # 防止已经下载过
-        if cursor_count == 0:
-#2024-3-16去除检查并重新下载种子的功能 防止bug
-            # 如有torrent 则下载种子
-#            if re.search('^https://exhentai.org/gallerytorrents.php?.+?$', i.torrent_address):
-#                dl_torrent.download(ex_info=i, mode=0)
-#            else:
-                # 下载 预览图 并 写入数据库
-                dl.download(i)
-        # 已经下载过 上次抓取时没有种子链接 现在获取到种子链接 则加入到数据库
-        # 逻辑: 数据库行数不等于0 则证明存在该条数据
-        #      表中torrent_address为空 则证明没有种子
-        #      抓取的数据中获取到torrent_address
-        #      则进行操作
-#2024/3/20去除该功能       
-#        elif cursor_count != 0 and cursor[0][3] == "" and i.torrent_address != "":
-#            dl_torrent.download(ex_info=i, mode=1)
-#        else:
-#            # 已经下载过
-#            isFinish = True
-
-#   # 出现过已下载的页面 退出程序
-#   if isFinish:
-#       exit(0)
+        if cursor[0] == 0:
+            dl.download(i)
+        else:
+            count = SQLUTILS.selectSQL_HAVETAG(i)  # 确定是否已经获取到预览图，是否已经抓取过tag，是否已经抓取过，是否被删除过
+            if count[0] != 0:
+                ex_tag_list = content_page.get_TAG_LIST(i.address)
+                SQLUTILS.updateSQL_TAG(i, ex_tag_list)

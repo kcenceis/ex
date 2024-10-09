@@ -3,7 +3,7 @@ import mysql.connector
 host = "db"
 user = ""
 password = ""
-db = "test"
+db = "ex"
 
 
 def initMySQL():
@@ -32,7 +32,7 @@ def check_database(database):
         mydb.close()
         return True
     else:
-        cursor.execute("CREATE DATABASE "+db)
+        cursor.execute("CREATE DATABASE " + db)
         mydb.commit()
         mydb.close()
         return False
@@ -63,6 +63,7 @@ def conn():
        cosplayer            text,
        mixed                text,
        other                text,
+       reclass              text,
        _delete              INT(4),
        dDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         data1               text,
@@ -83,43 +84,74 @@ def conn():
         mydb.close()
 
 
-def insertSQL(ex_info, ex_tag_list):
+def insertSQL(ex_info):
     conn = initMySQL()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO ex (title,address,torrent_address,magnet,file_name,category,language,parody,_character,"
-              "_group,artist,male,female,misc,cosplayer,mixed,other) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-                   (
-                ex_info.title,
-                ex_info.address,
-                ex_info.torrent_address,
-                ex_info.magnet,
-                ex_info.file_name,
-                ex_info.category,
-                ex_tag_list.language,
-                ex_tag_list.parody,
-                ex_tag_list.character,
-                ex_tag_list.group,
-                ex_tag_list.artist,
-                ex_tag_list.male,
-                ex_tag_list.female,
-                ex_tag_list.misc,))
+    cursor.execute(
+        "INSERT INTO ex (title,address,torrent_address,magnet,file_name,category,language,parody,_character,_group,artist,male,female,misc,cosplayer,mixed,other,reclass) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+        (
+            ex_info.title,
+            ex_info.address,
+            ex_info.torrent_address,
+            ex_info.magnet,
+            ex_info.file_name,
+            ex_info.category,
+            "", "", "", "", "", "", "", "", "", "", "", "",))
     conn.commit()
     conn.close()
+
 
 def updateSQL_magent(ex_info):
     conn = initMySQL()
     cursor = conn.cursor()
     cursor.execute('''UPDATE ex SET  magnet = %s where address = %s ''', (ex_info.magnet,
-               ex_info.address,))
+                                                                          ex_info.address,))
     conn.commit()
     cursor.close()
     conn.close()
 
+
+def updateSQL_TAG(ex_info, ex_tag_list):
+    try:
+        conn = initMySQL()
+        cursor = conn.cursor()
+        cursor.execute('''UPDATE ex
+        SET  language=%s,parody=%s,_character=%s,_group=%s,artist=%s,male=%s,female=%s,misc=%s,cosplayer=%s,mixed=%s,other=%s,reclass=%s,data1=1
+        where address = %s ''', (
+            ex_tag_list.language,
+            ex_tag_list.parody,
+            ex_tag_list.character,
+            ex_tag_list.group,
+            ex_tag_list.artist,
+            ex_tag_list.male,
+            ex_tag_list.female,
+            ex_tag_list.misc,
+            ex_tag_list.cosplayer,
+            ex_tag_list.mixed,
+            ex_tag_list.other,
+            ex_tag_list.reclass,
+            ex_info.address,
+        ))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"Error Occurred: {e}")
+
+
 def selectSQL_getex(ex_info):
     conn = initMySQL()
     cursor = conn.cursor()
-    cursor.execute('''SELECT *  from ex where address=%s''', (ex_info.address,))
-    return cursor.fetchall()
+    cursor.execute('''SELECT count(*)  from ex where address=%s''', (ex_info.address,))
+    return cursor.fetchone()
+
+
+def selectSQL_HAVETAG(ex_info):
+    conn = initMySQL()
+    cursor = conn.cursor()
+    cursor.execute('''SELECT count(*)  from ex where address=%s and _delete is NULL and data1 is NULL''',
+                   (ex_info.address,))
+    return cursor.fetchone()
+
 
 # 删除180日前的数据
 def DeleteSQL():

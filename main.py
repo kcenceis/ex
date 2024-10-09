@@ -1,6 +1,5 @@
 import time
 
-import SQLUTILS
 import Utils
 
 maxPage = 10  # 每次运行抓取的页面数
@@ -8,15 +7,15 @@ maxPage = 10  # 每次运行抓取的页面数
 if __name__ == '__main__':
     # r = Utils.getRequest('https://exhentai.org/')
     # Utils.getgl1c(r.text)
-    #SQLUTILS.connSQL()
-    #SQLUTILS.DeleteSQL()
+    # SQLUTILS.connSQL()
+    # SQLUTILS.DeleteSQL()
     Utils.initSQL()
     exhentai_url = 'https://exhentai.org/'
     params = 'f_cats=641'
     unext = ""
     for i in range(0, maxPage):
         if i == 0:
-            r = Utils.getPage(exhentai_url,params)
+            r = Utils.getPage(exhentai_url, params)
         else:
             r = Utils.getRequest(unext)
             # r = Utils.getPage(exhentai_url, params={

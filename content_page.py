@@ -1,7 +1,8 @@
 import re
 
-import Utils
 from bs4 import BeautifulSoup
+
+import Utils
 
 
 class ex_tag_list:
@@ -16,6 +17,7 @@ class ex_tag_list:
     cosplayer = ""
     mixed = ""
     other = ""
+    reclass = ""
 
 
 def get_TAG_LIST(url):
@@ -51,10 +53,12 @@ def get_TAG_LIST(url):
         elif re.search('^misc:$', tag):
             new_tag_list.misc = tag_list[:-1]
         elif re.search('^cosplayer:$', tag):
-            new_tag_list.misc = tag_list[:-1]
+            new_tag_list.cosplayer = tag_list[:-1]
         elif re.search('^mixed:$', tag):
-            new_tag_list.misc = tag_list[:-1]
+            new_tag_list.mixed = tag_list[:-1]
         elif re.search('^other:$', tag):
-            new_tag_list.misc = tag_list[:-1]
+            new_tag_list.other = tag_list[:-1]
+        elif re.search('^reclass:$', tag):
+            new_tag_list.reclass = tag_list[:-1]
     # 返回内容
     return new_tag_list

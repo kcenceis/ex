@@ -4,7 +4,6 @@ import time
 
 from bs4 import BeautifulSoup
 
-import Mysqldb
 import SQLUTILS
 import Utils
 import dl
@@ -90,10 +89,7 @@ def download(ex_info, mode):
                 dl.download(ex_info)
             # mode  1 代表 数据库 存在该条 但没有magnet 需要插入magnet
             elif mode == 1:
-                if Utils.SQLMode == "SQLite":
-                   SQLUTILS.updateSQL_magent(ex_info)
-                elif Utils.SQLMode == "MySQL":
-                    Mysqldb.updateSQL_magent(ex_info)
+                SQLUTILS.updateSQL_magent(ex_info)
             time.sleep(1)
             # 写入文件 下载种子 (废弃)
             # path = os.path.split(os.path.realpath(__file__))[0] + os.sep + 'torrent' + os.sep

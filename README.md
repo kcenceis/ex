@@ -9,7 +9,7 @@
 <pre>git clone https://github.com/kcenceis/ex.git
 cd ex\ex
 python3 -m venv ./venv
-source 
+source venv/bin/activate
 pip3 install -r requirements.txt
 </pre>
 apt install php8.2 php8.2-mysql php8.2-fpm

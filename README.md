@@ -4,8 +4,6 @@
 过滤TAG，标题，上传人等条件，并显示到页面<br>
 暂时只维护MySQL模式数据库<br>
 
-## 预览图
-<img width="600" height="400" src="https://i.imgur.com/3CaGWZE.jpeg"></img>
 
 ## Debian/Ubuntu Install
 

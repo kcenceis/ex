@@ -30,9 +30,9 @@ ex/config.json
 ### 设置每小时运行一次
 crontab -e -u www-data
 
-<code>0 * * * * /etc/caddy/html/tools/ex/venv/bin/python3 /etc/caddy/html/ex/main.py</code> # main.py 抓取预览图
+<code>0 * * * * /etc/caddy/html/ex/venv/bin/python3 /etc/caddy/html/ex/main.py</code> # main.py 抓取预览图
 
-<code>30 * * * * /etc/caddy/html/tools/ex/venv/bin/python3 /etc/caddy/html/ex/gettag.py</code> # gettag.py 抓取第二页页面信息(tag,上传者等等)
+<code>30 * * * * /etc/caddy/html/ex/venv/bin/python3 /etc/caddy/html/ex/gettag.py</code> # gettag.py 抓取第二页页面信息(tag,上传者等等)
 
 ## Maintainer
 

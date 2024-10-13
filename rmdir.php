@@ -37,7 +37,6 @@ $conn = new PDO("mysql:host=$mysql_host;dbname=$db", $mysql_user, $mysql_passwor
 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $conn->exec('TRUNCATE TABLE ex_gd3;');
 $conn = null;
-$db = 'ex';
 $conn = new PDO("mysql:host=$mysql_host;dbname=$db", $mysql_user, $mysql_password);
 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $conn->exec("update ex set _delete='1';");

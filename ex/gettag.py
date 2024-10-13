@@ -11,4 +11,4 @@ result = Mysqldb.selectSQL_untag()
 
 # 传入address循环抓取tag
 for i in result:
-    content_page.get_TAG_LIST(i)
+       content_page.get_TAG_LIST(i[0])

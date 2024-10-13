@@ -99,6 +99,93 @@ def conn():
         gd3_Length              text,
         dDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );''')
+        cursor.execute("""
+CREATE PROCEDURE `getEX`(IN `pageoffset` bigint, IN `pagecount` bigint)
+begin
+  # 局部变量声明必须在游标声明之前
+  declare i int default 0;
+-- 创建临时表
+CREATE TEMPORARY TABLE temp_filter select * from filter_list;
+CREATE TEMPORARY TABLE temp_title_filter select * from title_filter;
+CREATE TEMPORARY TABLE temp_ex select a.*,b.gd3_uploader,b.gd3_uploader_url,b.gd3_Posted,b.gd3_Language,b.gd3_Length from ex as a inner join ex_gd3 as b where a.address = b.address and a._delete is NULL;
+#CREATE TEMPORARY TABLE temp_ex select * from ex where _delete is NULL;
+#CREATE TEMPORARY TABLE temp_ex_gd3 select * from ex_gd3;
+-- 循环 获得filterlist中的过滤条件
+SET @row_count = (SELECT COUNT(*) FROM temp_filter);
+set @filter_list_tag = 'NOT category like \'%Western%\' AND NOT category like \'%Misc%\'  AND NOT category like \'%Non-H%\' ';
+while i < @row_count DO
+set @filter_list_tag= concat(@filter_list_tag,' ',(select CONCAT('AND NOT ',tag_list,' like \'%',tag,'%\'')   from temp_filter limit i,1));
+set i = i +1;
+END while;
+SET @row_count = (SELECT COUNT(*) from title_filter);
+SET i=0;
+while i < @row_count DO
+set @filter_list_tag= concat(@filter_list_tag,' ',(select CONCAT('AND NOT title like \'%',title,'%\'')   from title_filter limit i,1));
+set i = i +1;
+END while;
+
+set @query = CONCAT('select * from (select * from temp_ex) as iz where ', @filter_list_tag,'  order by dDate desc LIMIT ', pageoffset,',',pagecount);
+#set @query = CONCAT('select count(*) from (select * from temp_ex) as iz where ', @filter_list_tag,'  order by dDate desc ');
+-- 
+prepare statement from @query;
+execute statement;
+deallocate prepare statement;
+-- 
+DROP TEMPORARY TABLE IF EXISTS temp_title_filter;
+DROP TEMPORARY TABLE IF EXISTS temp_filter;
+DROP TEMPORARY TABLE IF EXISTS temp_extable;
+DROP TEMPORARY TABLE IF EXISTS temp_ex;
+end
+        """)
+        cursor.execute("""
+CREATE PROCEDURE `getEX_Count` ()
+begin
+ # 获取EX数据数量
+  # 局部变量声明必须在游标声明之前
+  declare i int default 0;
+-- 创建临时表
+CREATE TEMPORARY TABLE temp_filter select * from filter_list;
+CREATE TEMPORARY TABLE temp_title_filter select * from title_filter;
+CREATE TEMPORARY TABLE temp_ex select a.*,b.gd3_uploader,b.gd3_uploader_url,b.gd3_Posted,b.gd3_Language,b.gd3_Length from ex as a inner join ex_gd3 as b where a.address = b.address and a._delete is NULL;
+#CREATE TEMPORARY TABLE temp_ex select * from ex where _delete is NULL;
+#CREATE TEMPORARY TABLE temp_ex_gd3 select * from ex_gd3;
+-- 循环 获得filterlist中的过滤条件
+SET @row_count = (SELECT COUNT(*) FROM temp_filter);
+set @filter_list_tag = 'NOT category like \'%Western%\' AND NOT category like \'%Misc%\'  AND NOT category like \'%Non-H%\' ';
+while i < @row_count DO
+set @filter_list_tag= concat(@filter_list_tag,' ',(select CONCAT('AND NOT ',tag_list,' like \'%',tag,'%\'')   from temp_filter limit i,1));
+set i = i +1;
+END while;
+SET @row_count = (SELECT COUNT(*) from title_filter);
+SET i=0;
+while i < @row_count DO
+set @filter_list_tag= concat(@filter_list_tag,' ',(select CONCAT('AND NOT title like \'%',title,'%\'')   from title_filter limit i,1));
+set i = i +1;
+END while;
+
+
+-- 拼接查询语句
+set @query = CONCAT('select count(*) from (select * from temp_ex) as iz where ', @filter_list_tag);
+-- 
+prepare statement from @query;
+execute statement;
+deallocate prepare statement;
+-- 
+DROP TEMPORARY TABLE IF EXISTS temp_title_filter;
+DROP TEMPORARY TABLE IF EXISTS temp_filter;
+DROP TEMPORARY TABLE IF EXISTS temp_ex;
+end;;
+        """)
+
+        cursor.execute("""
+CREATE PROCEDURE `getid`(IN `ex_id` int)
+begin
+select a.language,a.parody,a._character,a._group,a.artist,a.male,a.female,a.misc,a.cosplayer,a.mixed,a.other,a.reclass,b.gd3_uploader
+from ex as a 
+inner join  ex_gd3 as b
+where a.id=ex_id and a.address=b.address;
+end
+                """)
         mydb.commit()
         mydb.close()
 

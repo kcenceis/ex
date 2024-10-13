@@ -29,6 +29,7 @@ ex/config.json
 crontab -e -u www-data
 
 <code>0 * * * * /etc/caddy/html/tools/ex/venv/bin/python3 /etc/caddy/html/ex/main.py</code>
+
 <code>0 * * * * /etc/caddy/html/tools/ex/venv/bin/python3 /etc/caddy/html/ex/gettag.py</code>
 
 ## Maintainer

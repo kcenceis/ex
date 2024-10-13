@@ -3,6 +3,8 @@ bencodepy==0.9.5
 certifi==2021.5.30
 chardet==4.0.0
 idna==2.10
+mysql-connector-python==9.0.0
+PySocks==1.7.1
 requests==2.25.1
 soupsieve==2.2.1
 urllib3==1.26.5

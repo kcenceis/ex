@@ -6,11 +6,12 @@
 
 
 ## Debian/Ubuntu Install
-
-git clone https://github.com/kcenceis/ex.git
-
-pip3 install -r ex/requirements.txt
-
+<code>git clone https://github.com/kcenceis/ex.git
+cd ex\ex
+python3 -m venv ./venv
+source 
+pip3 install -r requirements.txt
+</code>
 apt install php8.2 php8.2-mysql php8.2-fpm
 
 

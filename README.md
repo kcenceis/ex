@@ -16,6 +16,8 @@ apt install php8.2 php8.2-mysql php8.2-fpm
 
 ## Usage
 
+注意！！页面需要有tag内容才会显示数据，分开两次运行抓取是因为过早获得的页面有可能没有tag。
+
 ex/config.json
 <code>
 {

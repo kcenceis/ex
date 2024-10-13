@@ -272,12 +272,20 @@ def selectSQL_getex(ex_info):
     return cursor.fetchone()
 
 
+# 返回未有tag的条目数量
 def selectSQL_HAVETAG(ex_info):
     conn = initMySQL()
     cursor = conn.cursor()
     cursor.execute('''SELECT count(*)  from ex where address=%s and _delete is NULL and data1 is NULL''',
                    (ex_info.address,))
     return cursor.fetchone()
+
+# 获取未有tag的条目
+def selectSQL_untag():
+    conn = initMySQL()
+    cursor = conn.cursor()
+    cursor.execute('''SELECT address  from ex where _delete is NULL and data1 is NULL''')
+    return cursor.fetchall()
 
 
 # 删除180日前的数据

@@ -1,32 +1,14 @@
 import Mysqldb
+import SQLUTILS
 import content_page
-from Utils import ex_info
 
+# 初始化数据库
+SQLUTILS.connSQL()
 
-def gettag(address):
-    print('gettag:{}'.format(address))
-    content_page.get_TAG_LIST(address)
+# 获取没有tag的条目
+# 返回address
+result = Mysqldb.selectSQL_untag()
 
-
-def deletetag(address):
-    print('deletetag:{}'.format(address))
-    conn = Mysqldb.initMySQL()
-    cursor = conn.cursor()
-    cursor.execute('delete from push where address=%s', (address,))
-    conn.commit()
-    cursor.close()
-    conn.close()
-
-
-try:
-    conn = Mysqldb.initMySQL()
-    cursor = conn.cursor()
-    cursor.execute('''SELECT address from push limit 1''')
-    result = cursor.fetchone()
-    conn.close()
-    if len(result[0]) != 0:
-        address = result[0]
-        gettag(address)
-        deletetag(address)
-except:
-    print()
+# 传入address循环抓取tag
+for i in result:
+    content_page.get_TAG_LIST(i)

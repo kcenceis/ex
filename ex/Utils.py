@@ -25,7 +25,6 @@ with open(os.path.split(os.path.realpath(__file__))[0]+os.sep+"config.json", "r"
 mReq = requests.session()
 mReq.mount('https://', HTTPAdapter(max_retries=5))
 mReq.mount('http://', HTTPAdapter(max_retries=5))
-isFinish = False
 
 
 def initSQL():
@@ -136,28 +135,6 @@ def getgl1c(r):
             else:
                 div_gldown_a_href = div_gldown[i].find('a')['href']  # torrent页面链接
                 bookList[i].torrent_address = div_gldown_a_href
-        # 获取category
-
-    # for i in soup.find_all('div', class_='gl1t'):
-    #    print(i)
-    #    print(i.find('a')['href']) #book
-    #    print(i.find('div', class_='gl4t').text) #标题
-    # 抓取标题 本的地址
-
-    # for i in soup.find_all('td', class_='gl3t'):
-    #    s = ex_info()
-    #    # print(i)
-    #    a = i.find('a')
-    #    a_div_glink = a.find('div', class_='glink').text  # 标题
-    #    a_href = a['href']  # book 链接
-    #
-    #    #      t = re.findall('http[s]?://exhentai.org/g/.+/(.+?)/', a_href)
-    #    #      gid = re.findall('http[s]?://exhentai.org/g/(.+?)/.+/', a_href)
-    #    s.title = a_div_glink
-    #    s.file_name = validateTitle(a_div_glink)
-    #    s.address = a_href
-    #    print(s.address)
-    #    bookList.append(s)
     else:
         for div in soup.find_all('td', class_='gl3c glname'):
             s = ex_info()
@@ -196,7 +173,7 @@ def getgl1c(r):
         # 防止已经下载过
         if cursor[0] == 0:
             dl.download(i)
-        else:
-            count = SQLUTILS.selectSQL_HAVETAG(i)  # 确定是否已经获取到预览图，是否已经抓取过tag，是否已经抓取过，是否被删除过
-            if count[0] != 0:
-               content_page.get_TAG_LIST(i.address)
+        #else:
+        #    count = SQLUTILS.selectSQL_HAVETAG(i)  # 确定是否已经获取到预览图，是否已经抓取过tag，是否已经抓取过，是否被删除过
+        #    if count[0] != 0:
+        #       content_page.get_TAG_LIST(i.address)

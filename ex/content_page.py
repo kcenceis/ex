@@ -1,4 +1,5 @@
 import re
+import sys
 
 from bs4 import BeautifulSoup
 
@@ -31,13 +32,11 @@ class ex_gd3:
 
 
 def get_TAG_LIST(url):
+    print("抓取地址为:".format(url))
     ex_gd3_ = ex_gd3()
     r = Utils.getRequest(url)
     # 如果页面已经被删除，则跳过该页面，写入为已抓取
-    if re.search("You will be redirected to the front page momentarily",r.text):
-        Mysqldb.updateSQL_delete(url)
-    # 页面正常则正常抓取
-    else:
+    try:
         soup = BeautifulSoup(r.text, 'html.parser')
         div_gd3 = soup.find('div', id='gd3')
         div_gdn_a  = div_gd3.find('div', id='gdn').find('a')
@@ -60,7 +59,6 @@ def get_TAG_LIST(url):
             # 获取tag中TAG内容
             for k in i.find_all('div'):
                 tag_list = tag_list + k.text + ','
-
             # 获取TAG头
             tag = i.find('td', class_='tc').text
             tag = str(tag)
@@ -90,3 +88,11 @@ def get_TAG_LIST(url):
                 new_tag_list.reclass = tag_list[:-1]
         SQLUTILS.updateSQL_TAG(url, new_tag_list)
         SQLUTILS.insertSQL_gd3(url,ex_gd3_)
+    except:
+        # 报错或没有任何TAG，则直接不抓取
+        Mysqldb.updateSQL_delete(url)
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        exception_info = "Exception Type: {}\nException Object: {}\nLine Number: {}\nURL:{}".format(exc_type,exc_obj,exc_tb.tb_lineno,i.address)
+        # 将异常信息写入到文件中
+        with open("error.log", "a") as file:
+            file.write(exception_info)

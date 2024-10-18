@@ -92,7 +92,7 @@ def get_TAG_LIST(url):
         # 报错或没有任何TAG，则直接不抓取
         Mysqldb.updateSQL_delete(url)
         exc_type, exc_obj, exc_tb = sys.exc_info()
-        exception_info = "Exception Type: {}\nException Object: {}\nLine Number: {}\nURL:{}".format(exc_type,exc_obj,exc_tb.tb_lineno,i.address)
+        exception_info = "Exception Type: {}\nException Object: {}\nLine Number: {}\nURL:{}".format(exc_type,exc_obj,exc_tb.tb_lineno,url)
         # 将异常信息写入到文件中
         with open("error.log", "a") as file:
             file.write(exception_info)

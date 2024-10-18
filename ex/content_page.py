@@ -1,3 +1,4 @@
+import os
 import re
 import sys
 
@@ -94,5 +95,5 @@ def get_TAG_LIST(url):
         exc_type, exc_obj, exc_tb = sys.exc_info()
         exception_info = "Exception Type: {}\nException Object: {}\nLine Number: {}\nURL:{}".format(exc_type,exc_obj,exc_tb.tb_lineno,url)
         # 将异常信息写入到文件中
-        with open("error.log", "a") as file:
+        with open(os.path.split(os.path.realpath(__file__))[0]+os.sep+"error.log", "a") as file:
             file.write(exception_info)

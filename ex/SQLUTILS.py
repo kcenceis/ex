@@ -29,11 +29,11 @@ def updateSQL_magent(ex_info):
         SQLite.updateSQL_magent(ex_info)
 
 
-def updateSQL_TAG(address, ex_tag_list):
+def updateSQL_TAG(address, ex_tag_list,ex_gd3):
     if mode == "MySQL":
-        Mysqldb.updateSQL_TAG(address, ex_tag_list)
+        Mysqldb.updateSQL_TAG(address, ex_tag_list,ex_gd3)
     elif mode == "SQLite":
-        SQLite.updateSQL_TAG(address, ex_tag_list)
+        SQLite.updateSQL_TAG(address, ex_tag_list,ex_gd3)
 
 
 def selectSQL_getex(ex_info):

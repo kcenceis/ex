@@ -89,7 +89,7 @@ def updateSQL_magent(ex_info):
     conn.close()
 
 
-def updateSQL_TAG(address, ex_tag_list):
+def updateSQL_TAG(address, ex_tag_list,ex_gd3):
     conn = sqlite3.connect(SQLDATABASEFILE)
     c = conn.cursor()
     c.execute(

@@ -216,13 +216,14 @@ def updateSQL_magent(ex_info):
     conn.close()
 
 
-def updateSQL_TAG(address, ex_tag_list):
+def updateSQL_TAG(address, ex_tag_list,ex_gd3):
     try:
         conn = initMySQL()
         cursor = conn.cursor()
         cursor.execute('''UPDATE ex
-        SET  language=%s,parody=%s,_character=%s,_group=%s,artist=%s,male=%s,female=%s,misc=%s,cosplayer=%s,mixed=%s,other=%s,reclass=%s,data1=1
+        SET  category=%s,language=%s,parody=%s,_character=%s,_group=%s,artist=%s,male=%s,female=%s,misc=%s,cosplayer=%s,mixed=%s,other=%s,reclass=%s,data1=1
         where address = %s ''', (
+            ex_gd3.category,
             ex_tag_list.language,
             ex_tag_list.parody,
             ex_tag_list.character,

@@ -25,6 +25,7 @@ class ex_tag_list:
 
 
 class ex_gd3:
+    category = ""
     uploader = ""
     uploader_url = ""
     Posted = ""
@@ -39,22 +40,29 @@ def get_TAG_LIST(url):
     # 如果页面已经被删除，则跳过该页面，写入为已抓取
     try:
         soup = BeautifulSoup(r.text, 'html.parser')
+        # 开始获取gd3内容
         div_gd3 = soup.find('div', id='gd3')
         div_gdn_a  = div_gd3.find('div', id='gdn').find('a')
-        ex_gd3_.uploader = div_gdn_a.text
-        ex_gd3_.uploader_url = div_gdn_a.get('href')
+        ex_gd3_.uploader = div_gdn_a.text # 获得gd3下的uploader
+        ex_gd3_.uploader_url = div_gdn_a.get('href') # 获得gd3下的uploader_url
+        ex_gd3_.category= div_gd3.find('div', class_="cs ct1").text # 获得 gd3下的category
+        # 遍历 gd3 的tr条目
         for i in div_gd3.find_all('tr'):
             tag = str(i)
+            # 获得gd3下的Posted
             if re.search('Posted:',tag):
                 ex_gd3_.Posted = i.find('td',class_='gdt2').text
+            # 获得gd3下的Language
             elif re.search('Language:',tag):
                 ex_gd3_.Language = i.find('td',class_='gdt2').text
+            # 获得gd3下的Length
             elif re.search('Length:',tag):
                 ex_gd3_.Length = i.find('td',class_='gdt2').text
+        # 开始获取 TAG内容
         div_taglist = soup.find('div', id='taglist')
         div_taglist_tr = div_taglist.find_all('tr')
         new_tag_list = ex_tag_list()  # 创建ex_tag_list
-        # 遍历TAG
+        # 遍历TAG tr
         for i in div_taglist_tr:
             tag_list = ""
             # 获取tag中TAG内容
@@ -87,7 +95,7 @@ def get_TAG_LIST(url):
                 new_tag_list.other = tag_list[:-1]
             elif re.search('^reclass:$', tag):
                 new_tag_list.reclass = tag_list[:-1]
-        SQLUTILS.updateSQL_TAG(url, new_tag_list)
+        SQLUTILS.updateSQL_TAG(url, new_tag_list,ex_gd3_)
         SQLUTILS.insertSQL_gd3(url,ex_gd3_)
     except:
         # 报错或没有任何TAG，则直接不抓取

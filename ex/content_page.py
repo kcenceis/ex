@@ -45,7 +45,7 @@ def get_TAG_LIST(url):
         div_gdn_a  = div_gd3.find('div', id='gdn').find('a')
         ex_gd3_.uploader = div_gdn_a.text # 获得gd3下的uploader
         ex_gd3_.uploader_url = div_gdn_a.get('href') # 获得gd3下的uploader_url
-        ex_gd3_.category= div_gd3.find('div', class_="cs ct1").text # 获得 gd3下的category
+        ex_gd3_.category= div_gd3.find('div',id="gdc").text# 获得 gdc下的category
         # 遍历 gd3 的tr条目
         for i in div_gd3.find_all('tr'):
             tag = str(i)
